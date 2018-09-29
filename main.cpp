@@ -17,10 +17,12 @@ struct Dolgozat {
         is >> elozo;
         std::set<std::string> halmaz;
         while (is >> uj) {
-            if (isspace(uj.front()))
-                uj.erase(uj.begin());
-            halmaz.insert(elozo + " " + uj);
-            elozo = uj;
+            if (uj.length() < 3)
+                elozo = elozo + " " + uj;
+            else {
+                halmaz.insert(elozo + " " + uj);
+                elozo = uj;
+            }
         }
         parok = std::vector<std::string>(halmaz.begin(), halmaz.end());
     }
@@ -52,7 +54,7 @@ std::map<std::string, int> elofordulast_szamol(std::vector<Dolgozat> const& dolg
 bool osszeilleszt(std::vector<std::pair<std::string, int>>& stringek, std::string& mondat, int elofordulas) {
     std::string vege = mondat.substr(mondat.find_last_of(' ') + 1); //mondat utolso szava space nelkul
     int hanyadszor = 1;
-    while ((vege.back()!= '.' || vege.back() != '!' || vege.back() != '?' || vege.back() != ',') && hanyadszor <= 5) {
+    while (vege.back()!= '.' && vege.back() != '!' && vege.back() != '?' && hanyadszor <= 5) {
         for (size_t i = 0; i < stringek.size(); ++i)
         {
             std::string keres = stringek[i].first.substr(0, stringek[i].first.find(' ')); //szoparok vectorjaban az i-edik szopar elso szava
@@ -76,7 +78,7 @@ int main() {
 //kitorli a tul kis elofordulasu szoparokat
     std::map<std::string, int> stringek = elofordulast_szamol(dolgozatok);
     for (auto iter = stringek.begin(); iter != stringek.end(); ++iter)
-        if (iter->second <= 5)
+        if (iter->second <= 2)
             stringek.erase(iter);
 
 //atmasolom vektorba, mert tul sokszor iteralok rajta vegig az elkovetkezokben
