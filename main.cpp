@@ -55,19 +55,33 @@ bool osszeilleszt(std::vector<std::pair<std::string, int>>& stringek, std::strin
     std::string vege = mondat.substr(mondat.find_last_of(' ') + 1); //mondat utolso szava space nelkul
     int hanyadszor = 1;
     while (vege.back()!= '.' && vege.back() != '!' && vege.back() != '?' && hanyadszor <= 5) {
+        size_t min_idx = 0;
+        bool talalat = false;
         for (size_t i = 0; i < stringek.size(); ++i)
         {
             std::string keres = stringek[i].first.substr(0, stringek[i].first.find(' ')); //szoparok vectorjaban az i-edik szopar elso szava
             if (stringek[i].second != 0 && vege == keres && abs(stringek[i].second - elofordulas) < hanyadszor * 5) {   //ha megegyeznek es az elofordulaok kulonbsege egy bizonos szam alatt van, ami minden ciklusban no
-          //      std::cout << "--------------" << mondat << "____" << vege << "____" << stringek[i].first.substr(stringek[i].first.find(' ')) << std::endl;
-                mondat += stringek[i].first.substr(stringek[i].first.find(' '));
-                stringek[i].second--;
-                vege = mondat.substr(mondat.find_last_of(' ') + 1);
-            }
+                talalat = true;
+                //      std::cout << "--------------" << mondat << "____" << vege << "____" << stringek[i].first.substr(stringek[i].first.find(' ')) << std::endl;
+                if (abs(stringek[i].second - elofordulas) < abs(stringek[min_idx].second - elofordulas)) {
+                    min_idx = i;
+//                mondat += stringek[i].first.substr(stringek[i].first.find(' '));
+//                stringek[i].second--;
+//                vege = mondat.substr(mondat.find_last_of(' ') + 1);
+               }
+
+        }
+        }
+        if (talalat) {
+            //std::cout << min_idx << std::endl;
+            //std::cout << "--------------" << mondat << "____" << vege << "____" << stringek[min_idx].first.substr(stringek[min_idx].first.find(' ')) << std::endl;
+            mondat += stringek[min_idx].first.substr(stringek[min_idx].first.find(' '));
+            //stringek[min_idx].second--;
+            vege = mondat.substr(mondat.find_last_of(' ') + 1);
         }
         hanyadszor++;
     }
-    return mondat.back() == '.' || mondat.back() == '!' || mondat.back() == '?';
+    return true;//mondat.back() == '.' || mondat.back() == '!' || mondat.back() == '?';
 }
 
 
@@ -78,7 +92,7 @@ int main() {
 //kitorli a tul kis elofordulasu szoparokat
     std::map<std::string, int> stringek = elofordulast_szamol(dolgozatok);
     for (auto iter = stringek.begin(); iter != stringek.end(); ++iter)
-        if (iter->second <= 2)
+        if (iter->second <= 30)
             stringek.erase(iter);
 
 //atmasolom vektorba, mert tul sokszor iteralok rajta vegig az elkovetkezokben
